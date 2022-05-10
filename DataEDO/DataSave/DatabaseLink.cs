@@ -55,7 +55,6 @@ namespace DataEDO.DataSave
         {
             InsertRecords(todos.Where(x => x.IsNew).ToList(), connString);
             UpdateRecords(todos.Where(x => x.IsEdited).ToList(), connString);
-
         }
 
         public List<ToDo> LoadToDoListWhereTitle(string titleSearch, string connString = "Server= localhost; Database= master; Integrated Security=True;")
