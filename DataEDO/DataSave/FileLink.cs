@@ -11,6 +11,9 @@ namespace DataEDO.DataSave
     {
         public bool CheckConnectionLink(string filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+                return false;
+
             char[] invalidPathChars = Path.GetInvalidPathChars();
             char[] invalidFileNameChars= Path.GetInvalidFileNameChars();
 

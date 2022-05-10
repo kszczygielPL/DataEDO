@@ -14,7 +14,7 @@ namespace DataEDO
         FormStatuses currentFormStatus = FormStatuses.DefaultNoItems;
 
         //default database
-        IDataStore dataStore = new DatabaseLink();
+        IDataStore dataStore = null;
 
         public DataEDOToDoList()
         {
@@ -24,10 +24,12 @@ namespace DataEDO
         private void DataEDOToDoList_Load(object sender, EventArgs e)
         {
             SetActionsForFormStats();
-            SetStartupFormStatus();            
+            SelectDataSourceClass();
+            CleanAllData();
+            SetStartupFormStatus();
         }
 
-
+        
         private void SBAdd_Click(object sender, EventArgs e)
         {
             if(currentFormStatus== FormStatuses.DefaultNoItems)
@@ -45,8 +47,10 @@ namespace DataEDO
         private void SBEdit_Click(object sender, EventArgs e)
         {
             SetCurrentFormStatus(FormStatuses.Editing);
+            SetCurrentElementAsEdited();
         }
 
+      
         private void SBCancel_Click(object sender, EventArgs e)
         {
             toDoBindingSource.CancelEdit();
@@ -61,7 +65,8 @@ namespace DataEDO
 
             if(toDoBindingSource.DataSource != null)
             {
-                SBLoadToDoList.Enabled = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew);
+                SBLoadToDoList.Enabled = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew) ||
+                                            ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsEdited);
             }
         }
 
@@ -82,7 +87,6 @@ namespace DataEDO
             //Empty list load from source
             if (currentFormStatus == FormStatuses.DefaultNoItems)
             {
-                SelectDataSourceClass();
                 LoadToDosFromSource();
                 SetStartupFormStatus();
             }
@@ -91,9 +95,13 @@ namespace DataEDO
             if((currentFormStatus == FormStatuses.DefaultPresentItems)&&
                 (teConnectionString.Text != String.Empty))
             {
-                bool someDataToSave = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew);
+                bool someDataToSave = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew) ||
+                                        ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsEdited);
+
                 if (someDataToSave)
                     dataStore.SaveToDoList((List<ToDo>)toDoBindingSource.DataSource, teConnectionString.Text);
+
+                SBLoadToDoList.Enabled = false;
             }
         }
 
@@ -101,6 +109,10 @@ namespace DataEDO
 
         private void cbeTypeOfConnection_SelectedIndexChanged(object sender, EventArgs e)
         {
+            CleanAllData();
+            SetStartupFormStatus();
+            SelectDataSourceClass();
+
             switch (cbeTypeOfConnection.SelectedIndex)
             {
                 case 0:
@@ -153,28 +165,11 @@ namespace DataEDO
 
         private void teConnectionString_EditValueChanged(object sender, EventArgs e)
         {
-            switch (cbeTypeOfConnection.SelectedIndex)
-            {
-                case 0:
-                    SBLoadToDoList.Enabled = dataStore.CheckConnectionLink(teConnectionString.Text);
-
-                    break;
-                case 1:
-                    if(teConnectionString.Text != String.Empty)
-                    {
-                        if(Path.IsPathFullyQualified( teConnectionString.Text))
-                        {
-                            if(File.Exists(teConnectionString.Text))
-                            {
-                                SBLoadToDoList.Enabled = true;
-                            }
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
+            ValidateConnectionString();
+            
         }
+
+      
 
         private void sbSearchInTitle_Click(object sender, EventArgs e)
         {
@@ -355,6 +350,32 @@ namespace DataEDO
                     break;
             }
         }
+        private void ValidateConnectionString()
+        {
+            EPConnectionOrFilePath.ClearErrors();
+            bool _properlyValidated = dataStore.CheckConnectionLink(teConnectionString.Text);
+            if (!_properlyValidated)
+            {
+                EPConnectionOrFilePath.SetError(teConnectionString, "Error in connection string or file path.");
+            }
+            SBLoadToDoList.Enabled = _properlyValidated;
+
+        }
+
+        private void CleanAllData()
+        {
+            toDoBindingSource.DataSource = new List<ToDo>();
+            SBLoadToDoList.Text = "Load data from source.";
+        }
+
+        private void SetCurrentElementAsEdited()
+        {
+            if(toDoBindingSource.Current!=null)
+            {
+                ((ToDo)toDoBindingSource.Current).IsEdited = true;
+            }
+        }
+
 
         #endregion
     }

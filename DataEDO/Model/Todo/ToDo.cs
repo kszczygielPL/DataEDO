@@ -11,5 +11,7 @@ namespace DataEDO.Model.Todo
         public DateTime? Date { get; set; }
 
         public bool IsNew { get; set; } = false;
+        public bool IsEdited { get; set; } = false;
+
     }
 }

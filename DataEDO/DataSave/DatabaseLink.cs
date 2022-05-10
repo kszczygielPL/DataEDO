@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Windows;
 using DataEDO.Model.Todo;
-using DevExpress.XtraEditors;
 
 namespace DataEDO.DataSave
 {
@@ -54,36 +53,9 @@ namespace DataEDO.DataSave
 
         public void SaveToDoList(List<ToDo> todos, string connString)
         {
-            string sql = "insert into dbo.todolist(title, description, date) " +
-                "values(@title, @description, @date) ";
+            InsertRecords(todos.Where(x => x.IsNew).ToList(), connString);
+            UpdateRecords(todos.Where(x => x.IsEdited).ToList(), connString);
 
-            SqlConnection connection = new SqlConnection(connString);
-            try
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sql, connection);
-                SqlTransaction transaction = connection.BeginTransaction();
-                command.Transaction = transaction;
-
-                foreach (ToDo item in todos.Where(x => x.IsNew).ToList())
-                {
-                    command.Parameters.Clear();
-                    command.Parameters.Add("@title", System.Data.SqlDbType.VarChar, 150).Value = item.Title;
-                    command.Parameters.Add("@description", System.Data.SqlDbType.Text).Value = item.Description;
-                    command.Parameters.Add("@date", System.Data.SqlDbType.Date).Value = item.Date == null? DBNull.Value: item.Date;
-
-                    command.ExecuteNonQuery();
-                    item.IsNew = false;
-                }
-
-                transaction.Commit();
-                command.Dispose();
-                connection.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Can not open connection ! " + ex.ToString());
-            }
         }
 
         public List<ToDo> LoadToDoListWhereTitle(string titleSearch, string connString = "Server= localhost; Database= master; Integrated Security=True;")
@@ -146,7 +118,11 @@ namespace DataEDO.DataSave
 
         public bool CheckConnectionLink(string connString)
         {
+            if(string.IsNullOrEmpty(connString))
+                return false;
+
             bool check = true;
+            
             try
             {
                 DbConnectionStringBuilder csb = new DbConnectionStringBuilder();
@@ -157,6 +133,75 @@ namespace DataEDO.DataSave
                 check = false;
             }
             return check;
+        }
+
+        private void InsertRecords(List<ToDo> todosToInsert, string connString)
+        {
+            string sql = "insert into dbo.todolist(title, description, date) " +
+                "values(@title, @description, @date) ";
+
+            SqlConnection connection = new SqlConnection(connString);
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sql, connection);
+                SqlTransaction transaction = connection.BeginTransaction();
+                command.Transaction = transaction;
+
+                foreach (ToDo item in todosToInsert)
+                {
+                    command.Parameters.Clear();
+                    command.Parameters.Add("@title", System.Data.SqlDbType.VarChar, 150).Value = item.Title;
+                    command.Parameters.Add("@description", System.Data.SqlDbType.Text).Value = item.Description;
+                    command.Parameters.Add("@date", System.Data.SqlDbType.Date).Value = item.Date == null ? DBNull.Value : item.Date;
+
+                    command.ExecuteNonQuery();
+                    item.IsNew = false;
+                }
+
+                transaction.Commit();
+                command.Dispose();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Can not open connection ! " + ex.ToString());
+            }
+        }
+
+        private void UpdateRecords(List<ToDo> todosToUpdate, string connString)
+        {
+            string sql = "update dbo.todolist set title = @title, description =  @description, date = @date where id = @id ";
+
+            SqlConnection connection = new SqlConnection(connString);
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(sql, connection);
+                SqlTransaction transaction = connection.BeginTransaction();
+                command.Transaction = transaction;
+
+                foreach (ToDo item in todosToUpdate)
+                {
+                    command.Parameters.Clear();
+                    command.Parameters.Add("@title", System.Data.SqlDbType.VarChar, 150).Value = item.Title;
+                    command.Parameters.Add("@description", System.Data.SqlDbType.Text).Value = item.Description;
+                    command.Parameters.Add("@date", System.Data.SqlDbType.Date).Value = item.Date == null ? DBNull.Value : item.Date;
+                    
+                    command.Parameters.Add("@id", System.Data.SqlDbType.Int).Value = item.Id;
+
+                    command.ExecuteNonQuery();
+                    item.IsEdited = false;
+                }
+
+                transaction.Commit();
+                command.Dispose();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Can not open connection ! " + ex.ToString());
+            }
         }
     }
 }

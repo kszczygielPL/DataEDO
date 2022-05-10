@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataEDOToDoList));
-            this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+            this.lcMainForm = new DevExpress.XtraLayout.LayoutControl();
             this.gcElement = new DevExpress.XtraEditors.GroupControl();
             this.dlcToDoElement = new DevExpress.XtraDataLayout.DataLayoutControl();
             this.dlcToDoDataLayout = new DevExpress.XtraDataLayout.DataLayoutControl();
@@ -56,7 +56,7 @@
             this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
             this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
             this.gControlToDoList = new DevExpress.XtraEditors.GroupControl();
-            this.layoutControl3 = new DevExpress.XtraLayout.LayoutControl();
+            this.lcToDoListGCAndSearch = new DevExpress.XtraLayout.LayoutControl();
             this.sbSearchInDescription = new DevExpress.XtraEditors.SimpleButton();
             this.sbSearchInTitle = new DevExpress.XtraEditors.SimpleButton();
             this.teSearchInDescription = new DevExpress.XtraEditors.TextEdit();
@@ -74,7 +74,7 @@
             this.layoutControlItem16 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem17 = new DevExpress.XtraLayout.LayoutControlItem();
             this.gcDataSourceSelection = new DevExpress.XtraEditors.GroupControl();
-            this.layoutControl2 = new DevExpress.XtraLayout.LayoutControl();
+            this.lcDataSourceSelect = new DevExpress.XtraLayout.LayoutControl();
             this.cbeTypeOfConnection = new DevExpress.XtraEditors.ComboBoxEdit();
             this.sbCreateFile = new DevExpress.XtraEditors.SimpleButton();
             this.sbSetFileWithData = new DevExpress.XtraEditors.SimpleButton();
@@ -93,8 +93,9 @@
             this.EPToDoValidate = new DevExpress.XtraEditors.DXErrorProvider.DXErrorProvider(this.components);
             this.xsfdNewFile = new DevExpress.XtraEditors.XtraSaveFileDialog(this.components);
             this.xoflOpenFile = new DevExpress.XtraEditors.XtraOpenFileDialog(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
-            this.layoutControl1.SuspendLayout();
+            this.EPConnectionOrFilePath = new DevExpress.XtraEditors.DXErrorProvider.DXErrorProvider(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.lcMainForm)).BeginInit();
+            this.lcMainForm.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gcElement)).BeginInit();
             this.gcElement.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dlcToDoElement)).BeginInit();
@@ -121,8 +122,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gControlToDoList)).BeginInit();
             this.gControlToDoList.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControl3)).BeginInit();
-            this.layoutControl3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lcToDoListGCAndSearch)).BeginInit();
+            this.lcToDoListGCAndSearch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.teSearchInDescription.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.teSearchInTitle.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GCToDoList)).BeginInit();
@@ -135,8 +136,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem17)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gcDataSourceSelection)).BeginInit();
             this.gcDataSourceSelection.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControl2)).BeginInit();
-            this.layoutControl2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lcDataSourceSelect)).BeginInit();
+            this.lcDataSourceSelect.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cbeTypeOfConnection.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.teConnectionString.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).BeginInit();
@@ -150,20 +151,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EPToDoValidate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EPConnectionOrFilePath)).BeginInit();
             this.SuspendLayout();
             // 
-            // layoutControl1
+            // lcMainForm
             // 
-            this.layoutControl1.Controls.Add(this.gcElement);
-            this.layoutControl1.Controls.Add(this.gControlToDoList);
-            this.layoutControl1.Controls.Add(this.gcDataSourceSelection);
-            this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControl1.Name = "layoutControl1";
-            this.layoutControl1.Root = this.Root;
-            this.layoutControl1.Size = new System.Drawing.Size(1066, 515);
-            this.layoutControl1.TabIndex = 0;
-            this.layoutControl1.Text = "layoutControl1";
+            this.lcMainForm.AllowCustomization = false;
+            this.lcMainForm.Controls.Add(this.gcElement);
+            this.lcMainForm.Controls.Add(this.gControlToDoList);
+            this.lcMainForm.Controls.Add(this.gcDataSourceSelection);
+            this.lcMainForm.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lcMainForm.Location = new System.Drawing.Point(0, 0);
+            this.lcMainForm.Name = "lcMainForm";
+            this.lcMainForm.Root = this.Root;
+            this.lcMainForm.Size = new System.Drawing.Size(1066, 515);
+            this.lcMainForm.TabIndex = 0;
+            this.lcMainForm.Text = "layoutControl1";
             // 
             // gcElement
             // 
@@ -422,34 +425,34 @@
             // 
             // gControlToDoList
             // 
-            this.gControlToDoList.Controls.Add(this.layoutControl3);
+            this.gControlToDoList.Controls.Add(this.lcToDoListGCAndSearch);
             this.gControlToDoList.Location = new System.Drawing.Point(12, 12);
             this.gControlToDoList.Name = "gControlToDoList";
             this.gControlToDoList.Size = new System.Drawing.Size(562, 390);
             this.gControlToDoList.TabIndex = 0;
             this.gControlToDoList.Text = "ToDo list";
             // 
-            // layoutControl3
+            // lcToDoListGCAndSearch
             // 
-            this.layoutControl3.Controls.Add(this.sbSearchInDescription);
-            this.layoutControl3.Controls.Add(this.sbSearchInTitle);
-            this.layoutControl3.Controls.Add(this.teSearchInDescription);
-            this.layoutControl3.Controls.Add(this.teSearchInTitle);
-            this.layoutControl3.Controls.Add(this.GCToDoList);
-            this.layoutControl3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.layoutControl3.Location = new System.Drawing.Point(2, 23);
-            this.layoutControl3.Name = "layoutControl3";
-            this.layoutControl3.Root = this.layoutControlGroup5;
-            this.layoutControl3.Size = new System.Drawing.Size(558, 365);
-            this.layoutControl3.TabIndex = 1;
-            this.layoutControl3.Text = "layoutControl3";
+            this.lcToDoListGCAndSearch.Controls.Add(this.sbSearchInDescription);
+            this.lcToDoListGCAndSearch.Controls.Add(this.sbSearchInTitle);
+            this.lcToDoListGCAndSearch.Controls.Add(this.teSearchInDescription);
+            this.lcToDoListGCAndSearch.Controls.Add(this.teSearchInTitle);
+            this.lcToDoListGCAndSearch.Controls.Add(this.GCToDoList);
+            this.lcToDoListGCAndSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lcToDoListGCAndSearch.Location = new System.Drawing.Point(2, 23);
+            this.lcToDoListGCAndSearch.Name = "lcToDoListGCAndSearch";
+            this.lcToDoListGCAndSearch.Root = this.layoutControlGroup5;
+            this.lcToDoListGCAndSearch.Size = new System.Drawing.Size(558, 365);
+            this.lcToDoListGCAndSearch.TabIndex = 1;
+            this.lcToDoListGCAndSearch.Text = "layoutControl3";
             // 
             // sbSearchInDescription
             // 
             this.sbSearchInDescription.Location = new System.Drawing.Point(332, 331);
             this.sbSearchInDescription.Name = "sbSearchInDescription";
             this.sbSearchInDescription.Size = new System.Drawing.Size(214, 22);
-            this.sbSearchInDescription.StyleController = this.layoutControl3;
+            this.sbSearchInDescription.StyleController = this.lcToDoListGCAndSearch;
             this.sbSearchInDescription.TabIndex = 7;
             this.sbSearchInDescription.Text = "Search in description";
             this.sbSearchInDescription.Click += new System.EventHandler(this.sbSearchInDescription_Click);
@@ -459,7 +462,7 @@
             this.sbSearchInTitle.Location = new System.Drawing.Point(332, 305);
             this.sbSearchInTitle.Name = "sbSearchInTitle";
             this.sbSearchInTitle.Size = new System.Drawing.Size(214, 22);
-            this.sbSearchInTitle.StyleController = this.layoutControl3;
+            this.sbSearchInTitle.StyleController = this.lcToDoListGCAndSearch;
             this.sbSearchInTitle.TabIndex = 6;
             this.sbSearchInTitle.Text = "Search in title";
             this.sbSearchInTitle.Click += new System.EventHandler(this.sbSearchInTitle_Click);
@@ -468,16 +471,18 @@
             // 
             this.teSearchInDescription.Location = new System.Drawing.Point(123, 331);
             this.teSearchInDescription.Name = "teSearchInDescription";
+            this.teSearchInDescription.Properties.MaxLength = 150;
             this.teSearchInDescription.Size = new System.Drawing.Size(205, 20);
-            this.teSearchInDescription.StyleController = this.layoutControl3;
+            this.teSearchInDescription.StyleController = this.lcToDoListGCAndSearch;
             this.teSearchInDescription.TabIndex = 5;
             // 
             // teSearchInTitle
             // 
             this.teSearchInTitle.Location = new System.Drawing.Point(123, 305);
             this.teSearchInTitle.Name = "teSearchInTitle";
+            this.teSearchInTitle.Properties.MaxLength = 150;
             this.teSearchInTitle.Size = new System.Drawing.Size(205, 20);
-            this.teSearchInTitle.StyleController = this.layoutControl3;
+            this.teSearchInTitle.StyleController = this.lcToDoListGCAndSearch;
             this.teSearchInTitle.TabIndex = 4;
             // 
             // GCToDoList
@@ -593,27 +598,28 @@
             // 
             // gcDataSourceSelection
             // 
-            this.gcDataSourceSelection.Controls.Add(this.layoutControl2);
+            this.gcDataSourceSelection.Controls.Add(this.lcDataSourceSelect);
             this.gcDataSourceSelection.Location = new System.Drawing.Point(12, 406);
             this.gcDataSourceSelection.Name = "gcDataSourceSelection";
             this.gcDataSourceSelection.Size = new System.Drawing.Size(1042, 97);
             this.gcDataSourceSelection.TabIndex = 2;
             this.gcDataSourceSelection.Text = "Data source selection";
             // 
-            // layoutControl2
+            // lcDataSourceSelect
             // 
-            this.layoutControl2.Controls.Add(this.cbeTypeOfConnection);
-            this.layoutControl2.Controls.Add(this.sbCreateFile);
-            this.layoutControl2.Controls.Add(this.sbSetFileWithData);
-            this.layoutControl2.Controls.Add(this.SBLoadToDoList);
-            this.layoutControl2.Controls.Add(this.teConnectionString);
-            this.layoutControl2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.layoutControl2.Location = new System.Drawing.Point(2, 23);
-            this.layoutControl2.Name = "layoutControl2";
-            this.layoutControl2.Root = this.layoutControlGroup4;
-            this.layoutControl2.Size = new System.Drawing.Size(1038, 72);
-            this.layoutControl2.TabIndex = 0;
-            this.layoutControl2.Text = "layoutControl2";
+            this.lcDataSourceSelect.AllowCustomization = false;
+            this.lcDataSourceSelect.Controls.Add(this.cbeTypeOfConnection);
+            this.lcDataSourceSelect.Controls.Add(this.sbCreateFile);
+            this.lcDataSourceSelect.Controls.Add(this.sbSetFileWithData);
+            this.lcDataSourceSelect.Controls.Add(this.SBLoadToDoList);
+            this.lcDataSourceSelect.Controls.Add(this.teConnectionString);
+            this.lcDataSourceSelect.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lcDataSourceSelect.Location = new System.Drawing.Point(2, 23);
+            this.lcDataSourceSelect.Name = "lcDataSourceSelect";
+            this.lcDataSourceSelect.Root = this.layoutControlGroup4;
+            this.lcDataSourceSelect.Size = new System.Drawing.Size(1038, 72);
+            this.lcDataSourceSelect.TabIndex = 0;
+            this.lcDataSourceSelect.Text = "layoutControl2";
             // 
             // cbeTypeOfConnection
             // 
@@ -627,7 +633,7 @@
             "File"});
             this.cbeTypeOfConnection.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
             this.cbeTypeOfConnection.Size = new System.Drawing.Size(106, 20);
-            this.cbeTypeOfConnection.StyleController = this.layoutControl2;
+            this.cbeTypeOfConnection.StyleController = this.lcDataSourceSelect;
             this.cbeTypeOfConnection.TabIndex = 7;
             this.cbeTypeOfConnection.SelectedIndexChanged += new System.EventHandler(this.cbeTypeOfConnection_SelectedIndexChanged);
             // 
@@ -637,7 +643,7 @@
             this.sbCreateFile.Location = new System.Drawing.Point(891, 12);
             this.sbCreateFile.Name = "sbCreateFile";
             this.sbCreateFile.Size = new System.Drawing.Size(135, 22);
-            this.sbCreateFile.StyleController = this.layoutControl2;
+            this.sbCreateFile.StyleController = this.lcDataSourceSelect;
             this.sbCreateFile.TabIndex = 6;
             this.sbCreateFile.Text = "Create file";
             this.sbCreateFile.Click += new System.EventHandler(this.sbCreateFile_Click);
@@ -648,7 +654,7 @@
             this.sbSetFileWithData.Location = new System.Drawing.Point(753, 12);
             this.sbSetFileWithData.Name = "sbSetFileWithData";
             this.sbSetFileWithData.Size = new System.Drawing.Size(134, 22);
-            this.sbSetFileWithData.StyleController = this.layoutControl2;
+            this.sbSetFileWithData.StyleController = this.lcDataSourceSelect;
             this.sbSetFileWithData.TabIndex = 6;
             this.sbSetFileWithData.Text = "Open file";
             this.sbSetFileWithData.Click += new System.EventHandler(this.sbSetFileWithData_Click);
@@ -658,7 +664,7 @@
             this.SBLoadToDoList.Location = new System.Drawing.Point(12, 38);
             this.SBLoadToDoList.Name = "SBLoadToDoList";
             this.SBLoadToDoList.Size = new System.Drawing.Size(1014, 22);
-            this.SBLoadToDoList.StyleController = this.layoutControl2;
+            this.SBLoadToDoList.StyleController = this.lcDataSourceSelect;
             this.SBLoadToDoList.TabIndex = 5;
             this.SBLoadToDoList.Text = "Load ToDo list";
             this.SBLoadToDoList.Click += new System.EventHandler(this.SBLoadToDoList_Click);
@@ -668,8 +674,9 @@
             this.teConnectionString.EditValue = "Server= localhost; Database= master; Integrated Security=True;";
             this.teConnectionString.Location = new System.Drawing.Point(410, 12);
             this.teConnectionString.Name = "teConnectionString";
+            this.teConnectionString.Properties.MaxLength = 250;
             this.teConnectionString.Size = new System.Drawing.Size(339, 20);
-            this.teConnectionString.StyleController = this.layoutControl2;
+            this.teConnectionString.StyleController = this.lcDataSourceSelect;
             this.teConnectionString.TabIndex = 5;
             this.teConnectionString.EditValueChanged += new System.EventHandler(this.teConnectionString_EditValueChanged);
             // 
@@ -776,17 +783,21 @@
             this.EPToDoValidate.ContainerControl = this;
             this.EPToDoValidate.DataSource = this.toDoBindingSource;
             // 
+            // EPConnectionOrFilePath
+            // 
+            this.EPConnectionOrFilePath.ContainerControl = this;
+            // 
             // DataEDOToDoList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1066, 515);
-            this.Controls.Add(this.layoutControl1);
+            this.Controls.Add(this.lcMainForm);
             this.Name = "DataEDOToDoList";
             this.Text = "ToDo List";
             this.Load += new System.EventHandler(this.DataEDOToDoList_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
-            this.layoutControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.lcMainForm)).EndInit();
+            this.lcMainForm.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gcElement)).EndInit();
             this.gcElement.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dlcToDoElement)).EndInit();
@@ -813,8 +824,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gControlToDoList)).EndInit();
             this.gControlToDoList.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControl3)).EndInit();
-            this.layoutControl3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.lcToDoListGCAndSearch)).EndInit();
+            this.lcToDoListGCAndSearch.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.teSearchInDescription.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.teSearchInTitle.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GCToDoList)).EndInit();
@@ -827,8 +838,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem17)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gcDataSourceSelection)).EndInit();
             this.gcDataSourceSelection.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControl2)).EndInit();
-            this.layoutControl2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.lcDataSourceSelect)).EndInit();
+            this.lcDataSourceSelect.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.cbeTypeOfConnection.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.teConnectionString.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).EndInit();
@@ -842,12 +853,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EPToDoValidate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EPConnectionOrFilePath)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private DevExpress.XtraLayout.LayoutControl layoutControl1;
+        private DevExpress.XtraLayout.LayoutControl lcMainForm;
         private DevExpress.XtraDataLayout.DataLayoutControl dlcToDoElement;
         private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
         private DevExpress.XtraGrid.Views.Grid.GridView GVToDoList;
@@ -871,7 +883,7 @@
         private DevExpress.XtraGrid.Columns.GridColumn colDescription;
         private DevExpress.XtraGrid.Columns.GridColumn colDate;
         private DevExpress.XtraEditors.XtraSaveFileDialog xsfdNewFile;
-        private DevExpress.XtraLayout.LayoutControl layoutControl2;
+        private DevExpress.XtraLayout.LayoutControl lcDataSourceSelect;
         private DevExpress.XtraEditors.SimpleButton sbCreateFile;
         private DevExpress.XtraEditors.SimpleButton sbSetFileWithData;
         private DevExpress.XtraEditors.SimpleButton SBLoadToDoList;
@@ -899,7 +911,7 @@
         public DevExpress.XtraEditors.MemoEdit DescriptionMemoEdit;
         public DevExpress.XtraEditors.GroupControl gcDataSourceSelection;
         public DevExpress.XtraGrid.GridControl GCToDoList;
-        private DevExpress.XtraLayout.LayoutControl layoutControl3;
+        private DevExpress.XtraLayout.LayoutControl lcToDoListGCAndSearch;
         private DevExpress.XtraEditors.SimpleButton sbSearchInDescription;
         private DevExpress.XtraEditors.SimpleButton sbSearchInTitle;
         private DevExpress.XtraEditors.TextEdit teSearchInDescription;
@@ -910,5 +922,6 @@
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem15;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem16;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem17;
+        private DevExpress.XtraEditors.DXErrorProvider.DXErrorProvider EPConnectionOrFilePath;
     }
 }
