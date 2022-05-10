@@ -45,14 +45,12 @@ namespace DataEDO
         private void SBEdit_Click(object sender, EventArgs e)
         {
             SetCurrentFormStatus(FormStatuses.Editing);
-            
         }
 
         private void SBCancel_Click(object sender, EventArgs e)
         {
             toDoBindingSource.CancelEdit();
             SetStartupFormStatus();
-
         }
 
         private void SBSave_Click(object sender, EventArgs e)
@@ -77,7 +75,131 @@ namespace DataEDO
             ValidateForm();
         }
 
+        
+
+        private void SBLoadToDoList_Click(object sender, EventArgs e)
+        {
+            //Empty list load from source
+            if (currentFormStatus == FormStatuses.DefaultNoItems)
+            {
+                SelectDataSourceClass();
+                LoadToDosFromSource();
+                SetStartupFormStatus();
+            }
+
+            //List and connection string not empty save data
+            if((currentFormStatus == FormStatuses.DefaultPresentItems)&&
+                (teConnectionString.Text != String.Empty))
+            {
+                bool someDataToSave = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew);
+                if (someDataToSave)
+                    dataStore.SaveToDoList((List<ToDo>)toDoBindingSource.DataSource, teConnectionString.Text);
+            }
+        }
+
+       
+
+        private void cbeTypeOfConnection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (cbeTypeOfConnection.SelectedIndex)
+            {
+                case 0:
+                    sbCreateFile.Enabled = false;
+                    sbSetFileWithData.Enabled = false;
+                    teConnectionString.Text = "Server= localhost; Database= master; Integrated Security=True;";
+
+
+                    break;
+                case 1:
+                    sbCreateFile.Enabled = true;
+                    sbSetFileWithData.Enabled = true;
+                    teConnectionString.Text = String.Empty;
+
+                    if(String.IsNullOrEmpty(teConnectionString.Text))
+                        SBLoadToDoList.Enabled = false;
+
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void sbSetFileWithData_Click(object sender, EventArgs e)
+        {
+            if (xoflOpenFile.ShowDialog() == DialogResult.OK)
+            {
+                teConnectionString.Text = xoflOpenFile.FileName;
+            }
+            else
+            {
+                teConnectionString.Text = String.Empty;
+            }
+        }
+
+        private void sbCreateFile_Click(object sender, EventArgs e)
+        {
+            if (xsfdNewFile.ShowDialog() == DialogResult.OK)
+            {
+                teConnectionString.Text = xsfdNewFile.FileName;
+                SBLoadToDoList.Enabled=true;
+            }
+            else
+            {
+                teConnectionString.Text = String.Empty;
+                SBLoadToDoList.Enabled = false;
+            }
+        }
+
+        private void teConnectionString_EditValueChanged(object sender, EventArgs e)
+        {
+            switch (cbeTypeOfConnection.SelectedIndex)
+            {
+                case 0:
+                    SBLoadToDoList.Enabled = dataStore.CheckConnectionLink(teConnectionString.Text);
+
+                    break;
+                case 1:
+                    if(teConnectionString.Text != String.Empty)
+                    {
+                        if(Path.IsPathFullyQualified( teConnectionString.Text))
+                        {
+                            if(File.Exists(teConnectionString.Text))
+                            {
+                                SBLoadToDoList.Enabled = true;
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void sbSearchInTitle_Click(object sender, EventArgs e)
+        {
+            if (teSearchInTitle.Text != String.Empty &&
+                    teConnectionString.Text != String.Empty)
+            {
+                toDoBindingSource.Clear();
+                toDoBindingSource.DataSource = dataStore.LoadToDoListWhereTitle(teSearchInTitle.Text, teConnectionString.Text);
+            }
+        }
+
+        private void sbSearchInDescription_Click(object sender, EventArgs e)
+        {
+            if (teSearchInDescription.Text != String.Empty &&
+                    teConnectionString.Text != String.Empty)
+            {
+                toDoBindingSource.Clear();
+                toDoBindingSource.DataSource = dataStore.LoadToDoListWhereDescritpion(teSearchInDescription.Text, teConnectionString.Text);
+            }
+        }
+
         #region Methods
+        /// <summary>
+        /// Set startup form status according to list of items
+        /// </summary>
         private void SetStartupFormStatus()
         {
             if (toDoBindingSource.List.Count > 0)
@@ -88,6 +210,9 @@ namespace DataEDO
             formStatuses[currentFormStatus].Invoke();
         }
 
+        /// <summary>
+        /// Method to set controls state in according to form state
+        /// </summary>
         public void SetActionsForFormStats()
         {
             formStatuses[FormStatuses.DefaultNoItems] = () =>
@@ -145,6 +270,7 @@ namespace DataEDO
 
                 ValidateForm();
             };
+
             formStatuses[FormStatuses.Editing] = () =>
             {
                 TitleTextEdit.Enabled = true;
@@ -193,21 +319,21 @@ namespace DataEDO
             else
             {
                 SBSave.Enabled = false;
-            }    
+            }
 
-            
+
 
         }
 
 
         private void SelectDataSourceClass()
         {
-            if (!String.IsNullOrEmpty(teConnectionString.Text))
+            if (teConnectionString.Text != String.Empty)
             {
                 switch (cbeTypeOfConnection.SelectedIndex)
                 {
-                    case 0:                   
-                            dataStore = new DatabaseLink();                      
+                    case 0:
+                        dataStore = new DatabaseLink();
                         break;
                     case 1:
                         dataStore = new FileLink();
@@ -221,7 +347,6 @@ namespace DataEDO
             {
                 case FormStatuses.DefaultNoItems:
                     toDoBindingSource.DataSource = dataStore.LoadToDoList(teConnectionString.Text);
-
                     break;
                 case FormStatuses.DefaultPresentItems:
                     dataStore.SaveToDoList((List<ToDo>)toDoBindingSource.DataSource, teConnectionString.Text);
@@ -232,110 +357,5 @@ namespace DataEDO
         }
 
         #endregion
-
-        private void SBLoadToDoList_Click(object sender, EventArgs e)
-        {
-            if (currentFormStatus == FormStatuses.DefaultNoItems)
-            {
-                SelectDataSourceClass();
-                LoadToDosFromSource();
-                SetStartupFormStatus();
-            }
-            if((currentFormStatus == FormStatuses.DefaultPresentItems)&&
-                (teConnectionString.Text != String.Empty))
-            {
-                bool someDataToSave = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew);
-                if (someDataToSave)
-                    dataStore.SaveToDoList((List<ToDo>)toDoBindingSource.DataSource, teConnectionString.Text);
-            }
-        }
-
-       
-
-        private void cbeTypeOfConnection_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (cbeTypeOfConnection.SelectedIndex)
-            {
-                case 0:
-                    sbCreateFile.Enabled = false;
-                    sbSetFileWithData.Enabled = false;
-                    teConnectionString.Text = "Server= localhost; Database= master; Integrated Security=True;";
-
-
-                    break;
-                case 1:
-                    sbCreateFile.Enabled = true;
-                    sbSetFileWithData.Enabled = true;
-                    teConnectionString.Text = String.Empty;
-
-                    if(String.IsNullOrEmpty(teConnectionString.Text))
-                        SBLoadToDoList.Enabled = false;
-
-
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void sbSetFileWithData_Click(object sender, EventArgs e)
-        {
-            if (xoflOpenFile.ShowDialog() == DialogResult.OK)
-            {
-                teConnectionString.Text = xoflOpenFile.FileName;
-            }
-        }
-
-        private void sbCreateFile_Click(object sender, EventArgs e)
-        {
-            if (xsfdNewFile.ShowDialog() == DialogResult.OK)
-            {
-                teConnectionString.Text = xsfdNewFile.FileName;
-                SBLoadToDoList.Enabled=true;
-            }
-        }
-
-        private void teConnectionString_EditValueChanged(object sender, EventArgs e)
-        {
-            switch (cbeTypeOfConnection.SelectedIndex)
-            {
-                case 0:
-                    break;
-                case 1:
-                    if(teConnectionString.Text != String.Empty)
-                    {
-                        if(Path.IsPathFullyQualified( teConnectionString.Text))
-                        {
-                            if(File.Exists(teConnectionString.Text))
-                            {
-                                SBLoadToDoList.Enabled = true;
-                            }
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void sbSearchInTitle_Click(object sender, EventArgs e)
-        {
-            if (teSearchInTitle.Text != String.Empty &&
-                    teConnectionString.Text != String.Empty)
-            {
-                toDoBindingSource.Clear();
-                toDoBindingSource.DataSource = dataStore.LoadToDoListWhereTitle(teSearchInTitle.Text, teConnectionString.Text);
-            }
-        }
-
-        private void sbSearchInDescription_Click(object sender, EventArgs e)
-        {
-            if (teSearchInDescription.Text != String.Empty &&
-                    teConnectionString.Text != String.Empty)
-            {
-                toDoBindingSource.Clear();
-                toDoBindingSource.DataSource = dataStore.LoadToDoListWhereDescritpion(teSearchInDescription.Text, teConnectionString.Text);
-            }
-        }
     }
 }

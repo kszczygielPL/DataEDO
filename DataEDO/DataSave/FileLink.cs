@@ -9,6 +9,17 @@ namespace DataEDO.DataSave
 {
     public class FileLink : IDataStore
     {
+        public bool CheckConnectionLink(string filePath)
+        {
+            char[] invalidPathChars = Path.GetInvalidPathChars();
+            char[] invalidFileNameChars= Path.GetInvalidFileNameChars();
+
+            bool possiblePath = filePath.IndexOfAny(invalidPathChars) == -1;
+            bool possibleFileName = filePath.Split('\\').Last().IndexOfAny(invalidFileNameChars) == -1;
+            return possiblePath && possibleFileName;
+
+        }
+
         public List<ToDo> LoadToDoList(string pathToFile)
         {
             List<ToDo> toDoList = new List<ToDo>();

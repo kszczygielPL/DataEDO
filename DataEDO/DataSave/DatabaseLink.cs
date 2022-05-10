@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows;
 using DataEDO.Model.Todo;
+using DevExpress.XtraEditors;
 
 namespace DataEDO.DataSave
 {
@@ -140,6 +142,21 @@ namespace DataEDO.DataSave
                 MessageBox.Show("Can not open connection ! " + ex.ToString());
             }
             return todos;
+        }
+
+        public bool CheckConnectionLink(string connString)
+        {
+            bool check = true;
+            try
+            {
+                DbConnectionStringBuilder csb = new DbConnectionStringBuilder();
+                csb.ConnectionString = connString; 
+            }catch (Exception ex)
+            {
+                //any error
+                check = false;
+            }
+            return check;
         }
     }
 }

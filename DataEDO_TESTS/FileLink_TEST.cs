@@ -31,9 +31,24 @@ namespace DataEDO_TESTS
 
             List<ToDo> _todosLoaded = _fileOpertions.LoadToDoList("C:\\temp\\test_file.dat");
 
-            CollectionAssert.AreEquivalent(_todos, _todosLoaded);
             Assert.AreEqual(_todos.Count, _todosLoaded.Count);
 
+        }
+
+        [TestMethod]
+        [DataRow("C:\\temp\\todolist.txt", "true")]
+        [DataRow("C:\\temp\\to-dolist.txt", "true")]
+        [DataRow("C:\\temp\\todol?ist.txt", "false")]
+        [DataRow("C:\\temp\\todol#ist.txt", "true")]
+        [DataRow("C:\\temp\\tod$olist.txt", "true")]
+        [DataRow("C:\\temp\\todo&list.txt", "true")]
+
+        public void FileLink_CheckConnectionLink_TEST(string _path, string expectedResult)
+        {
+            var fileLink = new FileLink();
+            bool expectedResultBool = Boolean.Parse(expectedResult);
+
+            Assert.AreEqual(expectedResultBool, fileLink.CheckConnectionLink(_path));
         }
     }
 }
