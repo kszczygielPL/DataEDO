@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DataEDO.DataSave;
 using DataEDO.Model.Todo;
+using DevExpress.XtraEditors;
 
 namespace DataEDO
 {
@@ -14,7 +15,7 @@ namespace DataEDO
         FormStatuses currentFormStatus = FormStatuses.DefaultNoItems;
 
         //default database
-        IDataStore dataStore = null;
+        IDataStore dataStore;
 
         public DataEDOToDoList()
         {
@@ -32,18 +33,11 @@ namespace DataEDO
         
         private void SBAdd_Click(object sender, EventArgs e)
         {
-            if(currentFormStatus== FormStatuses.DefaultNoItems)
-                toDoBindingSource.DataSource = new List<ToDo>();
-
-            SetCurrentFormStatus(FormStatuses.Adding);
-
-            toDoBindingSource.AddNew();
-            toDoBindingSource.MoveLast();
-            ((ToDo)toDoBindingSource.Current).IsNew = true;
-
-            TitleTextEdit.Focus();
+            InitializeAdding();
         }
-      
+
+       
+
         private void SBEdit_Click(object sender, EventArgs e)
         {
             SetCurrentFormStatus(FormStatuses.Editing);
@@ -59,16 +53,10 @@ namespace DataEDO
 
         private void SBSave_Click(object sender, EventArgs e)
         {
-            toDoBindingSource.EndEdit();
-
-            SetStartupFormStatus();
-
-            if(toDoBindingSource.DataSource != null)
-            {
-                SBLoadToDoList.Enabled = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew) ||
-                                            ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsEdited);
-            }
+            EndAddingOrEditingState();
         }
+
+        
 
         private void TitleTextEdit_EditValueChanged(object sender, EventArgs e)
         {
@@ -84,84 +72,49 @@ namespace DataEDO
 
         private void SBLoadToDoList_Click(object sender, EventArgs e)
         {
+            HandlingLoadSaveDataButton();
+        }
+
+        private void HandlingLoadSaveDataButton()
+        {
             //Empty list load from source
             if (currentFormStatus == FormStatuses.DefaultNoItems)
             {
-                LoadToDosFromSource();
-                SetStartupFormStatus();
+                HanldeLoadData();
             }
 
             //List and connection string not empty save data
-            if((currentFormStatus == FormStatuses.DefaultPresentItems)&&
+            if ((currentFormStatus == FormStatuses.DefaultPresentItems) &&
                 (teConnectionString.Text != String.Empty))
             {
-                bool someDataToSave = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew) ||
-                                        ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsEdited);
-
-                if (someDataToSave)
-                    dataStore.SaveToDoList((List<ToDo>)toDoBindingSource.DataSource, teConnectionString.Text);
-
-                SBLoadToDoList.Enabled = false;
+                HandleSaveData();
             }
         }
 
-       
+      
 
         private void cbeTypeOfConnection_SelectedIndexChanged(object sender, EventArgs e)
         {
+           
             CleanAllData();
             SetStartupFormStatus();
             SelectDataSourceClass();
-
-            switch (cbeTypeOfConnection.SelectedIndex)
-            {
-                case 0:
-                    sbCreateFile.Enabled = false;
-                    sbSetFileWithData.Enabled = false;
-                    teConnectionString.Text = "Server= localhost; Database= master; Integrated Security=True;";
-
-
-                    break;
-                case 1:
-                    sbCreateFile.Enabled = true;
-                    sbSetFileWithData.Enabled = true;
-                    teConnectionString.Text = String.Empty;
-
-                    if(String.IsNullOrEmpty(teConnectionString.Text))
-                        SBLoadToDoList.Enabled = false;
-
-
-                    break;
-                default:
-                    break;
-            }
+            SetControlsStatusByConnectionType();
         }
 
         private void sbSetFileWithData_Click(object sender, EventArgs e)
         {
-            if (xoflOpenFile.ShowDialog() == DialogResult.OK)
-            {
-                teConnectionString.Text = xoflOpenFile.FileName;
-            }
-            else
-            {
-                teConnectionString.Text = String.Empty;
-            }
+            GetFileWithData();
         }
+
+     
 
         private void sbCreateFile_Click(object sender, EventArgs e)
         {
-            if (xsfdNewFile.ShowDialog() == DialogResult.OK)
-            {
-                teConnectionString.Text = xsfdNewFile.FileName;
-                SBLoadToDoList.Enabled=true;
-            }
-            else
-            {
-                teConnectionString.Text = String.Empty;
-                SBLoadToDoList.Enabled = false;
-            }
+            CreateFileToSaveData();
         }
+
+       
 
         private void teConnectionString_EditValueChanged(object sender, EventArgs e)
         {
@@ -191,7 +144,93 @@ namespace DataEDO
             }
         }
 
+        private void DataEDOToDoList_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            CheckIfEverythingIsSaved(e);
+        }
+
         #region Methods
+
+        private void CreateFileToSaveData()
+        {
+            if (xsfdNewFile.ShowDialog() == DialogResult.OK)
+            {
+                teConnectionString.Text = xsfdNewFile.FileName;
+                SBLoadToDoList.Enabled = true;
+            }
+            else
+            {
+                teConnectionString.Text = String.Empty;
+                SBLoadToDoList.Enabled = false;
+            }
+        }
+
+        private void SetControlsStatusByConnectionType()
+        {
+            switch (cbeTypeOfConnection.SelectedIndex)
+            {
+                case 0:
+                    sbCreateFile.Enabled = false;
+                    sbSetFileWithData.Enabled = false;
+                    teConnectionString.Text = "Server= localhost; Database= master; Integrated Security=True;";
+
+
+                    break;
+                case 1:
+                    sbCreateFile.Enabled = true;
+                    sbSetFileWithData.Enabled = true;
+                    teConnectionString.Text = String.Empty;
+
+                    if (String.IsNullOrEmpty(teConnectionString.Text))
+                        SBLoadToDoList.Enabled = false;
+
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        private void GetFileWithData()
+        {
+            if (xoflOpenFile.ShowDialog() == DialogResult.OK)
+            {
+                teConnectionString.Text = xoflOpenFile.FileName;
+            }
+            else
+            {
+                teConnectionString.Text = String.Empty;
+            }
+        }
+
+        private void InitializeAdding()
+        {
+            if (currentFormStatus == FormStatuses.DefaultNoItems)
+                toDoBindingSource.DataSource = new List<ToDo>();
+
+            SetCurrentFormStatus(FormStatuses.Adding);
+
+            toDoBindingSource.AddNew();
+            toDoBindingSource.MoveLast();
+            ((ToDo)toDoBindingSource.Current).IsNew = true;
+
+            TitleTextEdit.Focus();
+        }
+
+        private void EndAddingOrEditingState()
+        {
+            toDoBindingSource.EndEdit();
+
+            SetStartupFormStatus();
+
+            if (toDoBindingSource.DataSource != null)
+            {
+                SBLoadToDoList.Enabled = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew) ||
+                                            ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsEdited);
+            }
+        }
+
         /// <summary>
         /// Set startup form status according to list of items
         /// </summary>
@@ -376,7 +415,65 @@ namespace DataEDO
             }
         }
 
+        private void CheckIfEverythingIsSaved(FormClosingEventArgs e)
+        {
+            if (currentFormStatus == FormStatuses.Adding ||
+               currentFormStatus == FormStatuses.Editing)
+            {
+                if (XtraMessageBox.Show("You are in edit or add mode do you want to cancel closing?", "Attention", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
+            bool someDataToSave = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew) ||
+                                       ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsEdited);
+            if (someDataToSave)
+            {
+                if (XtraMessageBox.Show("Not all data has been saved, do you want to cancel closing?", "Attention", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
+          
+        }
+
+        private void HandleSaveData()
+        {
+            bool someDataToSave = ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsNew) ||
+                                                    ((List<ToDo>)toDoBindingSource.DataSource).Any(x => x.IsEdited);
+
+            if (someDataToSave)
+                dataStore.SaveToDoList((List<ToDo>)toDoBindingSource.DataSource, teConnectionString.Text);
+
+            SBLoadToDoList.Enabled = false;
+        }
+
+        private void HanldeLoadData()
+        {
+            LoadToDosFromSource();
+            SetStartupFormStatus();
+        }
+
+
+
 
         #endregion
+
+        private void cbeTypeOfConnection_EditValueChanging(object sender, DevExpress.XtraEditors.Controls.ChangingEventArgs e)
+        {
+            if (toDoBindingSource.Count > 0)
+            {
+                if(XtraMessageBox.Show("All data will be erase do you want to continue ?", "Attention", MessageBoxButtons.YesNo) 
+                    == DialogResult.No)
+                {
+                    e.Cancel=true;
+                }
+
+            }
+        }
     }
 }

@@ -636,6 +636,7 @@
             this.cbeTypeOfConnection.StyleController = this.lcDataSourceSelect;
             this.cbeTypeOfConnection.TabIndex = 7;
             this.cbeTypeOfConnection.SelectedIndexChanged += new System.EventHandler(this.cbeTypeOfConnection_SelectedIndexChanged);
+            this.cbeTypeOfConnection.EditValueChanging += new DevExpress.XtraEditors.Controls.ChangingEventHandler(this.cbeTypeOfConnection_EditValueChanging);
             // 
             // sbCreateFile
             // 
@@ -795,6 +796,7 @@
             this.Controls.Add(this.lcMainForm);
             this.Name = "DataEDOToDoList";
             this.Text = "ToDo List";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DataEDOToDoList_FormClosing);
             this.Load += new System.EventHandler(this.DataEDOToDoList_Load);
             ((System.ComponentModel.ISupportInitialize)(this.lcMainForm)).EndInit();
             this.lcMainForm.ResumeLayout(false);
